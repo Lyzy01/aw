@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoDonate — Play. Donate. Win.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">💸 GoDonate</div>
+  <div class="splash-tagline">Play. Donate. Win.</div>
+  <div class="splash-bars">
+    <div></div><div></div><div></div><div></div><div></div>
+  </div>
+</div>
+
+<!-- AUTH PAGE -->
+<div id="auth-page" class="page">
+  <div class="auth-bg">
+    <div class="coin-rain" id="coin-rain"></div>
+  </div>
+  <div class="auth-center">
+    <div class="auth-card" id="auth-card">
+      <div class="auth-logo">💸 GoDonate</div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+        <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- Login -->
+      <div id="login-form">
+        <button class="btn-google" onclick="googleLogin()">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z"/></svg>
+          Continue with Google
+        </button>
+        <div class="auth-divider"><span>or</span></div>
+        <input type="email" id="login-email" placeholder="Email" class="auth-input">
+        <input type="password" id="login-pass" placeholder="Password" class="auth-input">
+        <div id="login-err" class="err-msg"></div>
+        <button class="btn-main" onclick="emailLogin()">Login 🚀</button>
+      </div>
+
+      <!-- Signup -->
+      <div id="signup-form" style="display:none">
+        <button class="btn-google" onclick="googleLogin()">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z"/></svg>
+          Sign up with Google
+        </button>
+        <div class="auth-divider"><span>or</span></div>
+        <input type="text" id="signup-name" placeholder="Username" class="auth-input">
+        <input type="email" id="signup-email" placeholder="Email" class="auth-input">
+        <input type="password" id="signup-pass" placeholder="Password (6+ chars)" class="auth-input">
+        <div id="signup-err" class="err-msg"></div>
+        <button class="btn-main" onclick="emailSignup()">Create Account 🎉</button>
+      </div>
+
+      <p class="auth-hint">💡 Every minute you're online = +$5 free money!</p>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-page" class="page" style="display:none">
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="nav-logo">💸 GoDonate</div>
+    <div class="nav-balance" id="nav-balance">
+      <span class="balance-icon">💰</span>
+      <span id="balance-display">$0</span>
+      <span class="income-indicator" id="income-indicator">+$5/min</span>
+    </div>
+    <div class="nav-right">
+      <span class="nav-user" id="nav-username"></span>
+      <button class="nav-btn" onclick="showSection('donate')">💝 Donate</button>
+      <button class="nav-btn active-nav" onclick="showSection('home')" id="home-nav-btn">🏠</button>
+      <button class="nav-btn" onclick="logout()">🚪</button>
+    </div>
+  </nav>
+
+  <!-- SIDEBAR + CONTENT -->
+  <div class="app-body">
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">NAVIGATE</div>
+        <button class="sidebar-btn active" onclick="showSection('home')" data-sec="home">🏠 Home</button>
+        <button class="sidebar-btn" onclick="showSection('donate')" data-sec="donate">💝 Donate</button>
+        <button class="sidebar-btn" onclick="showSection('leaderboard')" data-sec="leaderboard">🏆 Leaderboard</button>
+        <button class="sidebar-btn" onclick="showSection('chat')" data-sec="chat">💬 Chat</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">GAMES</div>
+        <button class="sidebar-btn" onclick="showSection('coinflip')" data-sec="coinflip">🪙 Coin Flip</button>
+        <button class="sidebar-btn" onclick="showSection('dice')" data-sec="dice">🎲 Dice Roll</button>
+        <button class="sidebar-btn" onclick="showSection('slots')" data-sec="slots">🎰 Slots</button>
+        <button class="sidebar-btn" onclick="showSection('guess')" data-sec="guess">🔢 Number Guess</button>
+        <button class="sidebar-btn" onclick="showSection('rps')" data-sec="rps">✊ Rock Paper Scissors</button>
+        <button class="sidebar-btn" onclick="showSection('blackjack')" data-sec="blackjack">🃏 Blackjack</button>
+        <button class="sidebar-btn" onclick="showSection('roulette')" data-sec="roulette">🎡 Roulette</button>
+        <button class="sidebar-btn" onclick="showSection('crash')" data-sec="crash">📈 Crash</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">ACCOUNT</div>
+        <button class="sidebar-btn" onclick="showSection('profile')" data-sec="profile">👤 Profile</button>
+        <button class="sidebar-btn" onclick="logout()">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <main class="main-content" id="main-content">
+
+      <!-- HOME -->
+      <section id="sec-home" class="section active-sec">
+        <div class="section-header">
+          <h1>Welcome back, <span id="home-username">Player</span>! 👋</h1>
+          <p>Every minute = +$5. Play games. Donate to friends!</p>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-icon">💰</div>
+            <div class="stat-val" id="home-balance">$0</div>
+            <div class="stat-lbl">Your Balance</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">💝</div>
+            <div class="stat-val" id="home-donated">$0</div>
+            <div class="stat-lbl">Total Donated</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">🎮</div>
+            <div class="stat-val" id="home-games">0</div>
+            <div class="stat-lbl">Games Played</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-val" id="next-income">60s</div>
+            <div class="stat-lbl">Next +$5</div>
+          </div>
+        </div>
+        <div class="home-grid">
+          <div class="home-card" onclick="showSection('donate')">
+            <div class="hc-icon">💝</div>
+            <div class="hc-title">Donate</div>
+            <div class="hc-sub">Send money to friends</div>
+          </div>
+          <div class="home-card" onclick="showSection('coinflip')">
+            <div class="hc-icon">🥮</div>
+            <div class="hc-title">Coin Flip</div>
+            <div class="hc-sub">50/50 chance</div>
+          </div>
+          <div class="home-card" onclick="showSection('slots')">
+            <div class="hc-icon">🎰</div>
+            <div class="hc-title">Slots</div>
+            <div class="hc-sub">Spin to win big</div>
+          </div>
+          <div class="home-card" onclick="showSection('crash')">
+            <div class="hc-icon">📈</div>
+            <div class="hc-title">Crash</div>
+            <div class="hc-sub">Ride the multiplier</div>
+          </div>
+          <div class="home-card" onclick="showSection('leaderboard')">
+            <div class="hc-icon">🏆</div>
+            <div class="hc-title">Leaderboard</div>
+            <div class="hc-sub">Top donors</div>
+          </div>
+          <div class="home-card" onclick="showSection('chat')">
+            <div class="hc-icon">💬</div>
+            <div class="hc-title">Chat</div>
+            <div class="hc-sub">Beg & socialize</div>
+          </div>
+        </div>
+        <div class="recent-donations" id="recent-feed">
+          <h3>🔴 Live Feed</h3>
+          <div id="live-feed-list"><div class="feed-empty">No activity yet...</div></div>
+        </div>
+      </section>
+
+      <!-- DONATE -->
+      <section id="sec-donate" class="section">
+        <div class="section-header">
+          <h1>💝 Donate</h1>
+          <p>Send your money to someone special!</p>
+        </div>
+        <div class="donate-card">
+          <div class="donate-form">
+            <div class="input-group">
+              <label>Search User</label>
+              <input type="text" id="donate-search" placeholder="Type username..." class="game-input" oninput="searchUsers()">
+              <div id="user-suggestions" class="suggestions"></div>
+            </div>
+            <div class="input-group">
+              <label>Selected User</label>
+              <div class="selected-user" id="selected-user-display">No one selected</div>
+            </div>
+            <div class="input-group">
+              <label>Amount</label>
+              <input type="number" id="donate-amount" placeholder="$0" class="game-input" min="1">
+              <div class="quick-amounts">
+                <button onclick="setDonateAmount(10)">$10</button>
+                <button onclick="setDonateAmount(50)">$50</button>
+                <button onclick="setDonateAmount(100)">$100</button>
+                <button onclick="setDonateAmount(500)">$500</button>
+                <button onclick="setDonateAmount(1000)">$1K</button>
+                <button onclick="setDonateAmount(10000)">$10K</button>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>Message (optional)</label>
+              <input type="text" id="donate-msg" placeholder="Write something nice..." class="game-input" maxlength="100">
+            </div>
+            <button class="btn-main big" onclick="sendDonation()">💝 Send Donation</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- LEADERBOARD -->
+      <section id="sec-leaderboard" class="section">
+        <div class="section-header">
+          <h1>🏆 Leaderboard</h1>
+          <p>Top donors of all time</p>
+        </div>
+        <div class="lb-tabs">
+          <button class="lb-tab active" onclick="showLbTab('donors',this)">💝 Top Donors</button>
+          <button class="lb-tab" onclick="showLbTab('rich',this)">💰 Richest</button>
+          <button class="lb-tab" onclick="showLbTab('received',this)">🎁 Most Received</button>
+        </div>
+        <div id="lb-list" class="lb-list"></div>
+      </section>
+
+      <!-- CHAT -->
+      <section id="sec-chat" class="section">
+        <div class="section-header">
+          <h1>💬 General Chat</h1>
+          <p>Beg, joke, and hang out!</p>
+        </div>
+        <div class="chat-container">
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-loading">Loading messages...</div>
+          </div>
+          <div class="chat-input-area">
+            <div class="emoji-bar">
+              <button onclick="addEmoji('😂')">😂</button>
+              <button onclick="addEmoji('🙏')">🙏</button>
+              <button onclick="addEmoji('💸')">💸</button>
+              <button onclick="addEmoji('🔥')">🔥</button>
+              <button onclick="addEmoji('💎')">💎</button>
+              <button onclick="addEmoji('👑')">👑</button>
+              <button onclick="addEmoji('🎰')">🎰</button>
+              <button onclick="addEmoji('❤️')">❤️</button>
+            </div>
+            <div class="chat-input-row">
+              <input type="text" id="chat-input" placeholder="Type a message... (beg all you want 😂)" class="chat-text-input" maxlength="200" onkeydown="if(event.key==='Enter')sendChatMsg()">
+              <button class="btn-send" onclick="sendChatMsg()">Send 🚀</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COIN FLIP -->
+      <section id="sec-coinflip" class="section">
+        <div class="section-header"><h1>🪙 Coin Flip</h1><p>50/50 shot at doubling your money!</p></div>
+        <div class="game-card">
+          <div class="coin-display" id="coin-display">🥮</div>
+          <div class="game-controls">
+            <div class="bet-row">
+              <label>Bet Amount</label>
+              <input type="number" id="cf-bet" class="game-input small" placeholder="$10" min="1">
+            </div>
+            <div class="choice-row">
+              <button class="choice-btn" id="cf-heads" onclick="setCoinChoice('heads')">Heads 👑</button>
+              <button class="choice-btn" id="cf-tails" onclick="setCoinChoice('tails')">Tails 🦅</button>
+            </div>
+            <button class="btn-main big" onclick="playCoinFlip()">Flip! 🪙</button>
+          </div>
+          <div class="game-result" id="cf-result"></div>
+        </div>
+      </section>
+
+      <!-- DICE -->
+      <section id="sec-dice" class="section">
+        <div class="section-header"><h1>🎲 Dice Roll</h1><p>Guess the number, multiply your bet!</p></div>
+        <div class="game-card">
+          <div class="dice-display" id="dice-display">🎲</div>
+          <div class="game-controls">
+            <div class="bet-row"><label>Bet Amount</label><input type="number" id="dice-bet" class="game-input small" placeholder="$10" min="1"></div>
+            <div class="bet-row"><label>Guess (1-6)</label><input type="number" id="dice-guess" class="game-input small" placeholder="1-6" min="1" max="6"></div>
+            <p class="game-hint">Correct guess = 5x payout!</p>
+            <button class="btn-main big" onclick="playDice()">Roll! 🎲</button>
+          </div>
+          <div class="game-result" id="dice-result"></div>
+        </div>
+      </section>
+
+      <!-- SLOTS -->
+      <section id="sec-slots" class="section">
+        <div class="section-header"><h1>🎰 Slots</h1><p>Spin and match to win big!</p></div>
+        <div class="game-card">
+          <div class="slots-machine">
+            <div class="slot-reel" id="slot1">🍒</div>
+            <div class="slot-reel" id="slot2">🍋</div>
+            <div class="slot-reel" id="slot3">🍊</div>
+          </div>
+          <div class="slots-paytable">
+            <span>🍒🍒🍒 = 5x</span><span>⭐⭐⭐ = 20x</span>
+            <span>💎💎💎 = 50x</span><span>🎰🎰🎰 = 100x</span>
+          </div>
+          <div class="bet-row"><label>Bet</label><input type="number" id="slots-bet" class="game-input small" placeholder="$10" min="1"></div>
+          <button class="btn-main big" onclick="playSlots()">SPIN! 🎰</button>
+          <div class="game-result" id="slots-result"></div>
+        </div>
+      </section>
+
+      <!-- NUMBER GUESS -->
+      <section id="sec-guess" class="section">
+        <div class="section-header"><h1>🔢 Number Guess</h1><p>Guess 1-100. Closer = more hints!</p></div>
+        <div class="game-card">
+          <div class="guess-display" id="guess-display">❓</div>
+          <div class="game-controls">
+            <div class="bet-row"><label>Bet</label><input type="number" id="guess-bet" class="game-input small" placeholder="$10" min="1"></div>
+            <div class="bet-row"><label>Your Guess (1-100)</label><input type="number" id="guess-num" class="game-input small" placeholder="50" min="1" max="100"></div>
+            <p class="game-hint">Exact = 10x! Within 5 = 3x! Within 10 = 1.5x!</p>
+            <button class="btn-main big" onclick="playGuess()">Guess! 🔢</button>
+          </div>
+          <div class="game-result" id="guess-result"></div>
+        </div>
+      </section>
+
+      <!-- RPS -->
+      <section id="sec-rps" class="section">
+        <div class="section-header"><h1>✊ Rock Paper Scissors</h1><p>Beat the computer!</p></div>
+        <div class="game-card">
+          <div class="rps-display">
+            <div class="rps-player" id="rps-player">❓</div>
+            <div class="rps-vs">VS</div>
+            <div class="rps-cpu" id="rps-cpu">❓</div>
+          </div>
+          <div class="bet-row"><label>Bet</label><input type="number" id="rps-bet" class="game-input small" placeholder="$10" min="1"></div>
+          <div class="rps-choices">
+            <button class="rps-btn" onclick="playRPS('rock')">✊ Rock</button>
+            <button class="rps-btn" onclick="playRPS('paper')">✋ Paper</button>
+            <button class="rps-btn" onclick="playRPS('scissors')">✌️ Scissors</button>
+          </div>
+          <div class="game-result" id="rps-result"></div>
+        </div>
+      </section>
+
+      <!-- BLACKJACK -->
+      <section id="sec-blackjack" class="section">
+        <div class="section-header"><h1>🃏 Blackjack</h1><p>Beat the dealer! Get closest to 21.</p></div>
+        <div class="game-card">
+          <div class="bj-table">
+            <div class="bj-hand">
+              <div class="bj-label">Dealer</div>
+              <div id="dealer-cards" class="bj-cards"></div>
+              <div id="dealer-score" class="bj-score">0</div>
+            </div>
+            <div class="bj-hand">
+              <div class="bj-label">You</div>
+              <div id="player-cards" class="bj-cards"></div>
+              <div id="player-score" class="bj-score">0</div>
+            </div>
+          </div>
+          <div class="bet-row"><label>Bet</label><input type="number" id="bj-bet" class="game-input small" placeholder="$10" min="1"></div>
+          <div class="bj-controls">
+            <button class="btn-main" onclick="bjDeal()">Deal 🃏</button>
+            <button class="btn-secondary" id="bj-hit" onclick="bjHit()" disabled>Hit</button>
+            <button class="btn-secondary" id="bj-stand" onclick="bjStand()" disabled>Stand</button>
+          </div>
+          <div class="game-result" id="bj-result"></div>
+        </div>
+      </section>
+
+      <!-- ROULETTE -->
+      <section id="sec-roulette" class="section">
+        <div class="section-header"><h1>🎡 Roulette</h1><p>Bet on color or number!</p></div>
+        <div class="game-card">
+          <div class="roulette-wheel" id="roulette-wheel">🎡</div>
+          <div class="bet-row"><label>Bet</label><input type="number" id="rou-bet" class="game-input small" placeholder="$10" min="1"></div>
+          <div class="roulette-choices">
+            <button class="rou-btn red" data-bet="red" onclick="setRouBet('red')">🔴 Red (2x)</button>
+            <button class="rou-btn black" data-bet="black" onclick="setRouBet('black')">⚫ Black (2x)</button>
+            <button class="rou-btn green" data-bet="green" onclick="setRouBet('green')">🟢 Green (14x)</button>
+            <button class="rou-btn" data-bet="odd" onclick="setRouBet('odd')">Odd (2x)</button>
+            <button class="rou-btn" data-bet="even" onclick="setRouBet('even')">Even (2x)</button>
+          </div>
+          <div id="rou-selection" class="game-hint"></div>
+          <button class="btn-main big" onclick="playRoulette()">Spin! 🎡</button>
+          <div class="game-result" id="rou-result"></div>
+        </div>
+      </section>
+
+      <!-- CRASH -->
+      <section id="sec-crash" class="section">
+        <div class="section-header"><h1>📈 Crash</h1><p>Cash out before it crashes!</p></div>
+        <div class="game-card">
+          <div class="crash-display">
+            <div class="crash-multiplier" id="crash-mult">1.00x</div>
+            <div class="crash-bar"><div class="crash-fill" id="crash-fill"></div></div>
+          </div>
+          <div class="bet-row"><label>Bet</label><input type="number" id="crash-bet" class="game-input small" placeholder="$10" min="1"></div>
+          <div class="bet-row"><label>Auto Cash-out at</label><input type="number" id="crash-auto" class="game-input small" placeholder="2.00" step="0.01" min="1.01"></div>
+          <div class="crash-btns">
+            <button class="btn-main" id="crash-start-btn" onclick="startCrash()">Place Bet & Start 📈</button>
+            <button class="btn-danger" id="crash-cashout-btn" onclick="cashoutCrash()" disabled>Cash Out!</button>
+          </div>
+          <div class="game-result" id="crash-result"></div>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section id="sec-profile" class="section">
+        <div class="section-header"><h1>👤 Profile</h1></div>
+        <div class="profile-card">
+          <div class="profile-avatar" id="profile-avatar">👤</div>
+          <div class="profile-name" id="profile-name">-</div>
+          <div class="profile-email" id="profile-email">-</div>
+          <div class="profile-stats">
+            <div class="p-stat"><div class="p-stat-val" id="p-balance">$0</div><div class="p-stat-lbl">Balance</div></div>
+            <div class="p-stat"><div class="p-stat-val" id="p-donated">$0</div><div class="p-stat-lbl">Donated</div></div>
+            <div class="p-stat"><div class="p-stat-val" id="p-received">$0</div><div class="p-stat-lbl">Received</div></div>
+            <div class="p-stat"><div class="p-stat-val" id="p-games">0</div><div class="p-stat-lbl">Games</div></div>
+          </div>
+          <div class="profile-history">
+            <h3>Recent Transactions</h3>
+            <div id="tx-list"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- CHAT SIDEBAR (mini) -->
+    <div class="chat-mini" id="chat-mini">
+      <div class="chat-mini-header">💬 Live Chat <button onclick="showSection('chat')">Open →</button></div>
+      <div class="chat-mini-msgs" id="chat-mini-msgs"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="admin-login-page" class="page" style="display:none">
+  <div class="auth-center">
+    <div class="auth-card">
+      <div class="auth-logo">💸 GoDonate <span class="admin-badge">ADMIN</span></div>
+      <input type="text" id="adm-user" placeholder="Admin username" class="auth-input" autocomplete="off">
+      <input type="password" id="adm-pass" placeholder="Password" class="auth-input" autocomplete="new-password">
+      <div id="adm-err" class="err-msg"></div>
+      <button class="btn-main" onclick="adminLogin()">Enter Admin Panel</button>
+      <p style="text-align:center;margin-top:1rem"><a href="#" onclick="showAppPage()" style="color:var(--accent)">← Back to site</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-page" class="page" style="display:none">
+  <nav class="topnav admin-topnav">
+    <div class="nav-logo">💸 GoDonate <span class="admin-badge">ADMIN</span></div>
+    <button class="nav-btn" onclick="adminLogout()">Logout</button>
+  </nav>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <button class="admin-nav-btn active" onclick="showAdminTab('overview',this)">📊 Overview</button>
+      <button class="admin-nav-btn" onclick="showAdminTab('users',this)">👥 Users</button>
+      <button class="admin-nav-btn" onclick="showAdminTab('transactions',this)">💳 Transactions</button>
+      <button class="admin-nav-btn" onclick="showAdminTab('announce',this)">📢 Announcements</button>
+      <button class="admin-nav-btn" onclick="showAdminTab('settings',this)">⚙️ Settings</button>
+    </aside>
+    <div class="admin-content">
+      <div id="atab-overview" class="admin-tab active">
+        <h2>📊 Overview</h2>
+        <div class="admin-stats">
+          <div class="admin-stat"><div class="as-val" id="as-users">0</div><div class="as-lbl">Total Users</div></div>
+          <div class="admin-stat"><div class="as-val" id="as-donations">$0</div><div class="as-lbl">Total Donated</div></div>
+          <div class="admin-stat"><div class="as-val" id="as-msgs">0</div><div class="as-lbl">Chat Messages</div></div>
+          <div class="admin-stat"><div class="as-val" id="as-active">0</div><div class="as-lbl">Active Today</div></div>
+        </div>
+        <h3 style="margin-top:1.5rem">Recent Donations</h3>
+        <div id="admin-recent-donations"></div>
+      </div>
+      <div id="atab-users" class="admin-tab">
+        <h2>👥 Users</h2>
+        <input type="text" placeholder="Search users..." class="admin-search" oninput="adminSearchUsers(this.value)">
+        <div id="admin-users-list"></div>
+      </div>
+      <div id="atab-transactions" class="admin-tab">
+        <h2>💳 All Transactions</h2>
+        <div id="admin-tx-list"></div>
+      </div>
+      <div id="atab-announce" class="admin-tab">
+        <h2>📢 Send Announcement</h2>
+        <p style="color:var(--muted);margin-bottom:1rem">This will appear in chat as a system message for all users.</p>
+        <textarea id="announce-text" placeholder="Write your announcement..." class="admin-textarea" rows="4"></textarea>
+        <div style="margin-top:0.5rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button class="btn-main" onclick="sendAnnouncement()">📢 Send to Chat</button>
+          <button class="btn-secondary" onclick="sendAnnouncement('pinned')">📌 Send as Pinned</button>
+        </div>
+        <h3 style="margin-top:2rem">Bot Commands</h3>
+        <div class="bot-commands">
+          <button class="btn-secondary" onclick="sendBotMsg('🎉 Event starting! Double income for the next 10 minutes!')">🎉 Double Income Event</button>
+          <button class="btn-secondary" onclick="sendBotMsg('🔥 Hot streak! All game wins doubled for 5 minutes!')">🔥 Hot Streak Event</button>
+          <button class="btn-secondary" onclick="sendBotMsg('💎 VIP Drop! First to type !claim gets $1000!')">💎 VIP Drop</button>
+          <button class="btn-secondary" onclick="sendBotMsg('⚠️ Server maintenance in 10 minutes. Please save your progress!')">⚠️ Maintenance Warning</button>
+        </div>
+      </div>
+      <div id="atab-settings" class="admin-tab">
+        <h2>⚙️ Settings</h2>
+        <div class="admin-setting-row">
+          <label>Income per minute ($)</label>
+          <input type="number" id="admin-income" value="5" class="admin-input">
+        </div>
+        <div class="admin-setting-row">
+          <label>Min donation amount ($)</label>
+          <input type="number" id="admin-min-donate" value="1" class="admin-input">
+        </div>
+        <div class="admin-setting-row">
+          <label>Big donation threshold ($)</label>
+          <input type="number" id="admin-big-donate" value="10000" class="admin-input">
+        </div>
+        <button class="btn-main" onclick="saveAdminSettings()">Save Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GLOBAL PARTICLE CANVAS (always on top) -->
+<canvas id="particle-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:8000;"></canvas>
+
+<!-- BIG DONATION OVERLAY (10k+) -->
+<div id="big-donation-overlay" class="big-overlay" style="display:none">
+  <div class="big-overlay-bg"></div>
+  <div class="big-fireworks" id="big-fireworks"></div>
+  <div class="big-donation-card" id="big-donation-card">
+    <div class="bdc-badge">💸 MEGA DONATION</div>
+    <div class="bdc-from" id="bdc-from"></div>
+    <div class="bdc-arrow">➜</div>
+    <div class="bdc-to" id="bdc-to"></div>
+    <div class="bdc-amount" id="bdc-amount"></div>
+    <div class="bdc-msg" id="bdc-msg"></div>
+    <div class="bdc-confetti-row" id="bdc-emoji-row"></div>
+  </div>
+</div>
+
+<!-- SMALL DONATION ALERT (slides in top-right for all users) -->
+<div id="donation-alert-queue"></div>
+
+<!-- DONATION TICKER (bottom scrolling bar) -->
+<div id="donation-ticker" class="donation-ticker" style="display:none">
+  <span class="ticker-label">💸 LIVE</span>
+  <div class="ticker-track" id="ticker-track"></div>
+</div>
+
+<!-- FLOATING MONEY PARTICLES triggered on any donation -->
+<div id="float-money-container" style="position:fixed;inset:0;pointer-events:none;z-index:7500;overflow:hidden;"></div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module" src="app.js"></script>
+</body>
+</html>
